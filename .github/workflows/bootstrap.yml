@@ -1,0 +1,58 @@
+name: Bootstrap 610PPT source
+
+on:
+  push:
+    branches: [main]
+    paths: ["source.part-*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and unpack source snapshot
+        shell: bash
+        run: |
+          cat source.part-* > source.tar.gz
+          echo "55830a1be17d41ffe6eaef239110e0be68508f0cf1d99c69d890e39bd7847759  source.tar.gz" | sha256sum -c -
+          tar -xzf source.tar.gz
+          rm -f source.tar.gz source.part-* .github/workflows/bootstrap.yml
+      - name: Publish source tree
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "Import 610PPT source snapshot"
+          git push origin HEAD:main
+
+  validate:
+    needs: publish
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Validate macOS installer
+        if: runner.os == 'macOS'
+        run: bash ./install.sh --dry-run
+      - name: Validate Windows source install
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./install.ps1 -SkipSetup -NoOpen -DataDirectory "$env:RUNNER_TEMP\610ppt-data"
+          ./uninstall.ps1 -DataDirectory "$env:RUNNER_TEMP\610ppt-data"
