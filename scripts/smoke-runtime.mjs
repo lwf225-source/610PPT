@@ -61,5 +61,5 @@ try {
     new Promise((resolve) => setTimeout(resolve, 5000))
   ]);
   if (child.exitCode === null) child.kill("SIGKILL");
-  await fs.rm(dataDir, { recursive: true, force: true });
+  await fs.rm(dataDir, { recursive: true, force: true, maxRetries: 20, retryDelay: 250 });
 }
