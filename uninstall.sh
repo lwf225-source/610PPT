@@ -1,4 +1,4 @@
-#!/bin/zsh
-set -euo pipefail
-ROOT_DIR="${0:A:h}"
+#!/bin/sh
+set -eu
+ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 exec "$ROOT_DIR/scripts/uninstall-workbench-service.zsh" "$@"
