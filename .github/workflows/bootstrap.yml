@@ -3,7 +3,7 @@ name: Bootstrap 610PPT source
 on:
   push:
     branches: [main]
-    paths: ["source.part-*"]
+    paths: ["source.ready"]
 
 permissions:
   contents: write
