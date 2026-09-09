@@ -1,0 +1,9 @@
+{
+  "name": "610ppt-v2-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/production.js",
+    "dev": "node server/index.js"
+  }
+}

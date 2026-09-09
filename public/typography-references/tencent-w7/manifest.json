@@ -1,0 +1,23 @@
+{
+  "fontFamily": "TencentSans",
+  "fontStyle": "W7",
+  "displayName": "腾讯体 W7",
+  "sourceFont": "腾讯体 W7.ttf",
+  "referenceImage": "reference.png",
+  "canvas": {
+    "width": 1600,
+    "height": 900
+  },
+  "typographyScale": {
+    "封面标题": 52,
+    "正文页标题": 32,
+    "副标题": 20,
+    "模块标题": 18,
+    "正文": 15,
+    "图表标注": 13,
+    "关键数字": 34,
+    "页脚/备注": 12,
+    "底部结论": 15
+  },
+  "generationNote": "Image Gen uses this image as a visual glyph reference. It does not load the TTF file directly."
+}

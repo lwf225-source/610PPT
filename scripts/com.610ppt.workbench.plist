@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>{{SERVICE_LABEL}}</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{NODE_BIN}}</string>
+    <string>{{WORKBENCH_DIR}}/v2/server/production.js</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>{{WORKBENCH_DIR}}</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>{{USER_HOME}}</string>
+    <key>LANG</key>
+    <string>zh_CN.UTF-8</string>
+    <key>PATH</key>
+    <string>{{SERVICE_PATH}}</string>
+    <key>PPT_WORKBENCH_API_PORT</key>
+    <string>{{PUBLIC_PORT}}</string>
+    <key>PPT_V2_PORT</key>
+    <string>{{PUBLIC_PORT}}</string>
+    <key>PPT_V1_ENGINE_PORT</key>
+    <string>{{ENGINE_PORT}}</string>
+    <key>PPT_V2_V1_BASE_URL</key>
+    <string>{{ENGINE_BASE_URL}}</string>
+    <key>PPT_WORKBENCH_DATA_DIR</key>
+    <string>{{DATA_DIR}}</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>5</integer>
+  <key>ProcessType</key>
+  <string>Interactive</string>
+  <key>StandardOutPath</key>
+  <string>{{DATA_DIR}}/logs/workbench-service.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>{{DATA_DIR}}/logs/workbench-service.stderr.log</string>
+</dict>
+</plist>

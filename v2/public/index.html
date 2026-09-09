@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2868dc" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="610PPT" />
+    <title>610PPT</title>
+    <link rel="icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css?v=20260909-title-alignment-v1" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="610PPT 首页">
+          <img class="brand-logo" src="/icons/icon-192.png" alt="" width="34" height="34" />
+          <span>610PPT</span>
+          <small>本地版</small>
+        </a>
+        <div class="topbar-actions">
+          <span id="engineStatus" class="engine-status" aria-live="polite">正在检查本地引擎</span>
+          <button id="installApp" class="button secondary compact" type="button" hidden>安装</button>
+          <button id="openProjects" class="button secondary compact" type="button">项目</button>
+          <button id="openAiSettings" class="button secondary compact" type="button" aria-haspopup="dialog">设置</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <header class="workflow-header">
+          <div>
+            <span id="stepEyebrow" class="eyebrow">第 1 步 / 4</span>
+            <h1 id="stepTitle">上传文档</h1>
+          </div>
+          <p id="stepDescription">上传内容，选择讲述结构与页数，再交给 AI 拆页。</p>
+        </header>
+
+        <nav id="stepper" class="stepper" aria-label="PPT 制作流程">
+          <button class="step-button active" type="button" data-step="1"><span>1</span><strong>上传文档</strong></button>
+          <button class="step-button" type="button" data-step="2"><span>2</span><strong>确认内容</strong></button>
+          <button class="step-button" type="button" data-step="3"><span>3</span><strong>选择风格</strong></button>
+          <button class="step-button" type="button" data-step="4"><span>4</span><strong>编辑导出</strong></button>
+        </nav>
+
+        <section id="globalNotice" class="global-notice" hidden role="status" aria-live="polite" aria-atomic="true"></section>
+
+        <section id="dataMigrationBanner" class="migration-banner" hidden role="status" aria-live="polite">
+          <div>
+            <strong>发现旧版本地项目数据</strong>
+            <span id="dataMigrationCopy">迁移前会自动备份，已有同名项目不会覆盖。</span>
+          </div>
+          <button id="runDataMigration" class="button secondary compact" type="button">迁移旧项目</button>
+        </section>
+
+        <div id="pageCountAnalysisOverlay" class="analysis-overlay" hidden aria-live="assertive" aria-busy="true">
+          <section class="analysis-dialog" role="status" aria-labelledby="pageCountAnalysisTitle">
+            <span id="pageCountAnalysisSpinner" class="analysis-spinner" aria-hidden="true"></span>
+            <div class="analysis-copy">
+              <span class="analysis-eyebrow">AI 内容分析</span>
+              <h2 id="pageCountAnalysisTitle">AI 正在分析建议页数</h2>
+              <p id="pageCountAnalysisDetail">正在读取内容结构、信息密度与章节边界</p>
+              <span id="pageCountAnalysisElapsed" class="analysis-elapsed">已用时 0 秒</span>
+            </div>
+          </section>
+        </div>
+
+        <div id="taskProgressToast" class="analysis-overlay" hidden aria-live="polite" aria-busy="true">
+          <section class="analysis-dialog" role="status" aria-labelledby="taskProgressToastTitle">
+            <span class="analysis-spinner" aria-hidden="true"></span>
+            <div class="analysis-copy">
+              <span class="analysis-eyebrow">AI 拆页文案</span>
+              <h2 id="taskProgressToastTitle">AI 正在生成整套文案</h2>
+              <p id="taskProgressToastDetail">正在梳理讲述结构</p>
+              <span id="taskProgressToastElapsed" class="analysis-elapsed">已用时 0 秒</span>
+            </div>
+          </section>
+        </div>
+
+        <section id="step1Panel" class="workflow-step active" data-panel-step="1">
+          <div class="document-shell">
+            <div class="document-inputs">
+            <section class="document-source" aria-label="上传文档">
+              <input id="documentFile" type="file" accept=".md,.markdown,.doc,.docx,.pptx,.pdf" hidden />
+              <div class="upload-icon" aria-hidden="true">文</div>
+              <div id="documentBrief" class="document-brief empty-state">
+                <strong>从一份文档开始</strong>
+                <span>支持 Markdown、Word、PPTX、PDF</span>
+              </div>
+              <button id="chooseDocument" class="button primary choose-document" type="button">选择文档</button>
+              <p id="uploadHint" class="upload-hint">文件保存在本机，最大 20 MB；使用 AI 时，相关内容会发送给所选模型服务。</p>
+              <span id="documentState" class="inline-state">等待上传</span>
+            </section>
+
+
+            </div>
+
+            <section class="setup-panel" aria-label="拆页前确认">
+              <div class="setup-heading">
+                <div><span class="eyebrow">拆页前确认</span><h2>选择讲述结构</h2></div>
+                <span id="narrativeRecommendation" class="recommendation-label">选择一种结构</span>
+              </div>
+              <div id="narrativeOptions" class="narrative-options" role="radiogroup"></div>
+              <div class="content-detail-row" aria-labelledby="contentDetailHeading">
+                <div class="content-detail-copy">
+                  <strong id="contentDetailHeading">内容详略</strong>
+                  <span>不改变页数和字号，只调整每页保留的信息</span>
+                </div>
+                <div id="contentDetailOptions" class="content-detail-options" role="radiogroup" aria-label="选择内容详略"></div>
+              </div>
+              <div class="page-count-row">
+                <div><strong>期望页数（选填）</strong><span id="pageCountRecommendation">留空将在拆页时由 AI 分析</span></div>
+                <label class="page-count-control"><span>填写</span><input id="targetPageCount" type="number" min="3" max="60" value="" disabled /><em>页</em></label>
+              </div>
+              <button id="splitDocument" class="button primary primary-action dock-source-action" type="button" disabled>请先上传文档</button>
+            </section>
+          </div>
+        </section>
+
+        <section id="pageWorkflow" class="workflow-step" data-panel-step="2">
+          <div class="stage-toolbar">
+            <div>
+              <span id="stageEyebrow" class="eyebrow">逐页生成</span>
+              <h2 id="stageTitle">整套大纲</h2>
+              <p id="stageDescription">AI 完成整套结构校验后，一次展示全部页面文案。</p>
+              <p id="splitConfigurationSummary" class="split-configuration-summary" hidden></p>
+            </div>
+            <div class="stage-actions">
+              <button id="finishContentStructure" class="button secondary" type="button" hidden>完成调整</button>
+              <button id="adjustContent" class="button secondary dock-source-action" type="button">调整整套内容</button>
+              <button id="startSplit" class="button secondary dock-source-action" type="button" disabled>重新拆页</button>
+              <button id="controlSplit" class="button secondary dock-source-action" type="button" hidden disabled>取消拆页</button>
+              <button id="goStyle" class="button primary dock-source-action" type="button" disabled>确认文案，选风格</button>
+              <button id="startGeneration" class="button secondary" type="button" disabled>生成未完成页面</button>
+              <button id="startQaExport" class="button primary" type="button" disabled>检查并导出</button>
+            </div>
+          </div>
+          <div id="taskSummary" class="task-summary empty-state">拆页开始后，这里显示当前进度。</div>
+<section id="image2AnchorPanel" class="image2-anchor-panel" hidden aria-labelledby="image2AnchorTitle">
+  <div class="anchor-panel-heading">
+    <div>
+      <span class="eyebrow">视觉一致性校准</span>
+      <h2 id="image2AnchorTitle">确认视觉锚点</h2>
+      <p>封面锁定整套气质，首张正文锁定标题、字号、边距和组件风格；正文布局可按内容变化。两张都确认后，再生成剩余页面。</p>
+    </div>
+    <span id="image2AnchorProgress" class="anchor-progress">等待确认 2 张锚点</span>
+  </div>
+  <section id="referenceGenerationProgress" class="reference-generation-progress" hidden aria-label="参考风格生成进度">
+    <ol id="referenceGenerationStages"></ol>
+    <p id="referenceGenerationStatus" role="status"></p>
+    <p id="referenceGenerationError" role="alert"></p>
+    <button id="retryReferenceGeneration" class="button secondary" type="button" hidden>重试参考分析与生成</button>
+  </section>
+  <div id="image2AnchorCards" class="image2-anchor-cards"></div>
+  <section id="qaDecisionPanel" class="qa-decision-panel" aria-labelledby="qaDecisionTitle" hidden>
+    <div class="qa-decision-heading">
+      <div>
+        <span class="eyebrow">页面一致性检查</span>
+        <h3 id="qaDecisionTitle">逐页确认检查结果</h3>
+        <p id="qaDecisionDescription">先为每个问题页选择修复或不修复；全部选择完成后，再批量开始修复。</p>
+      </div>
+      <span id="qaDecisionProgress" class="qa-decision-progress">等待检查</span>
+    </div>
+    <div id="qaDecisionSummary" class="qa-decision-summary"></div>
+    <div id="qaDecisionCards" class="qa-decision-cards"></div>
+  </section>
+  <div id="image2AnchorActionDock" class="anchor-panel-actions" aria-live="polite">
+    <div class="anchor-action-progress">
+      <div class="anchor-progress-value">
+        <strong id="image2AnchorCompleted">0 / 0</strong>
+        <em id="image2AnchorProgressPercent">0%</em>
+      </div>
+      <div id="image2AnchorProgressBar" class="anchor-task-progress" role="progressbar" aria-label="页面生成进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0%">
+        <i id="image2AnchorProgressFill" aria-hidden="true"></i>
+      </div>
+      <span id="image2AnchorCompletedLabel">已完成 0 页</span>
+    </div>
+    <div class="anchor-action-state">
+      <strong id="image2AnchorActionTitle">等待确认视觉锚点</strong>
+      <span id="image2AnchorHint">请先确认封面与正文视觉母版，再生成剩余页面。</span>
+    </div>
+    <button id="adjustImage2Anchors" class="button secondary" type="button">调整锚点</button>
+    <div class="anchor-primary-actions">
+      <button id="stopGeneration" class="button secondary stop-generation" type="button" hidden>停止生成</button>
+      <button id="directExportPptx" class="button secondary direct-export" type="button" hidden>直接导出（跳过检查）</button>
+      <button id="generateRemainingPages" class="button primary" type="button" disabled>确认锚点后生成剩余页面</button>
+    </div>
+  </div>
+</section>
+          <div class="page-workspace">
+            <aside class="page-list-panel">
+              <div class="section-heading"><h3>页面</h3><span id="taskStatus" class="status">等待任务</span></div>
+              <div id="pageStream" class="page-stream" aria-live="polite"></div>
+            </aside>
+            <section class="page-editor-panel">
+              <div class="section-heading"><h3 id="pagePanelTitle">本页文案</h3><span id="pageNo">-</span></div>
+              <div id="pageDetail" class="page-detail empty-state">逐页内容会在这里出现。</div>
+            </section>
+          </div>
+        </section>
+
+        <section id="step3Panel" class="workflow-step" data-panel-step="3">
+          <div id="stylePanel" class="style-gallery-panel">
+            <div class="stage-toolbar style-toolbar">
+              <div>
+                <h2>选择风格</h2>
+              </div>
+              <div class="style-toolbar-actions">
+                <span id="styleSavedState" class="selection-state">请选择风格</span>
+                <button id="confirmStyleGenerate" class="button primary dock-source-action" type="button" disabled>确认风格并生成 PPT</button>
+              </div>
+            </div>
+            <p class="style-choice-intro">选择内置风格，或上传自己的图片、PPT 或 PDF 作为参考。</p>
+            <div id="styleOptions" class="style-options"><div id="customStyleOption" class="custom-style-option"></div></div>
+            <input id="referenceFile" type="file" accept=".png,.jpg,.jpeg,.webp,.pptx,.pdf" multiple hidden />
+            <dialog id="referenceDialog" class="reference-dialog" aria-labelledby="referenceHeading">
+              <button id="closeReferenceDialog" class="button subtle reference-dialog-close" type="button">返回风格选择</button>
+            <section id="styleReferenceUpload" class="reference-upload" aria-labelledby="referenceHeading">
+              <div class="reference-heading"><h2 id="referenceHeading">风格与排版参考</h2><span>选填</span></div>
+              <p id="referenceDialogNotice" class="reference-error" role="alert"></p>
+              <p id="referenceEmpty">上传喜欢的页面图片、PPT 或 PDF，参考它的配色、字体和排版。</p>
+              <div class="reference-buttons"><button id="referenceUpload" class="button secondary" type="button">上传图片、PPT 或 PDF</button><button id="referenceRemove" class="button subtle" type="button" hidden>移除参考</button></div>
+              <p id="referenceStatus" class="inline-state" role="status">仅用于视觉风格与排版</p>
+              <div id="referenceDetails" hidden>
+                <strong id="referenceName"></strong>
+                <p id="referenceSummary"></p>
+                <p id="referenceError" class="reference-error" role="alert"></p>
+                <button id="referenceRetry" class="button secondary" type="button" hidden>重新解析</button>
+                <p id="referenceSelectionCount"></p>
+                <div id="referencePages" class="reference-pages"></div>
+                <label id="referencePageNumbersField" class="reference-note" for="referencePageNumbers">指定参考页（选填）<input id="referencePageNumbers" type="text" placeholder="例如：1, 3, 5；留空自动选择" /></label>
+                <label class="reference-note" for="referenceNote">补充要求（选填）<textarea id="referenceNote" maxlength="1000" rows="3" placeholder="例如：参考第 3 页排版，不要底部装饰"></textarea></label>
+                <button id="referenceSave" class="button secondary" type="button" disabled>参考设置已保存</button>
+                <p class="reference-boundary">只参考样式，文件中的文字与数据不会加入新内容。支持图片、PPTX 和 PDF，最多 30 张图片或 30 页文档，单文件最大 40 MB。</p>
+              </div>
+            </section>
+            </dialog>
+          </div>
+        </section>
+      </main>
+
+      <div id="stepActionDock" class="anchor-panel-actions step-action-dock" aria-live="polite" hidden>
+        <div class="anchor-action-progress">
+          <strong id="stepDockProgress">0 / 1</strong>
+          <span id="stepDockProgressLabel">等待上传文档</span>
+        </div>
+        <div class="anchor-action-state">
+          <strong id="stepDockTitle">先上传一份文档</strong>
+          <span id="stepDockHint">支持 Markdown、Word、PPTX、PDF</span>
+        </div>
+        <button id="stepDockSecondary" class="button secondary step-dock-secondary" type="button" hidden>返回调整</button>
+        <button id="stepDockPrimary" class="button primary" type="button" disabled>请先上传文档</button>
+      </div>
+    </div>
+
+    <dialog id="contentAdjustDialog" class="content-dialog" aria-labelledby="contentAdjustTitle">
+      <div class="content-dialog-heading"><h2 id="contentAdjustTitle">调整整套内容</h2><button id="closeContentAdjust" type="button" class="button ghost">关闭</button></div>
+      <p>选择要调整的范围。</p>
+      <div class="content-adjust-options">
+        <button id="changeContentSettings" type="button" class="button secondary">修改页数和内容偏好</button>
+        <section id="contentSettingsFields" class="content-adjust-options" hidden>
+          <label>页数<input id="contentPageCount" type="number" min="3" max="60" required /></label>
+          <label>内容详略<select id="contentDetailChoice"><option value="focus">重点展示</option><option value="detailed">详细展示</option></select></label>
+          <label>讲述方式<select id="contentNarrativeChoice"></select></label>
+          <p>应用后会重新生成整套文案，并需要重新制作页面图片。</p>
+          <button id="applyContentSettings" type="button" class="button primary">应用设置并重新生成</button>
+        </section>
+        <button id="manageContentPages" type="button" class="button secondary">合并或删除页面</button>
+        <details><summary>重新生成整套内容</summary><p>按当前设置重新生成全部文案，会替换现有文案，并需要重新制作页面图片。</p><button id="restartContent" type="button" class="button secondary">重新生成整套内容</button></details>
+      </div>
+    </dialog>
+    <dialog id="contentRewriteDialog" class="content-dialog content-rewrite-dialog" aria-labelledby="contentRewriteTitle">
+      <div class="content-dialog-heading"><h2 id="contentRewriteTitle">让 AI 修改本页</h2><button id="closeContentRewrite" type="button" class="button ghost">关闭</button></div>
+      <form id="contentRewriteForm">
+        <label class="content-rewrite-input"><span>希望怎么改？</span><textarea id="contentRewriteInstruction" rows="3" maxlength="2000" required placeholder="例如：短一点，保留关键数据；或补充原文中的细节。"></textarea></label>
+        <div class="content-rewrite-presets"><button class="button ghost small" type="button" data-content-preset="短一点，合并重复表达，保留关键数据、来源和必要限定。">短一点</button><button class="button ghost small" type="button" data-content-preset="保留更多原文细节，用清楚易读的短句表达，不新增没有来源的信息。">保留更多细节</button><button class="button ghost small" type="button" data-content-preset="用更容易理解的日常表达改写，保留原意、关键数据和必要限定。">更容易理解</button></div>
+        <button id="requestContentRewrite" class="button primary" type="submit">生成修改建议</button>
+      </form>
+      <p id="contentRewriteStatus" role="status"></p>
+      <div id="contentRewriteCandidate" hidden></div>
+      <div id="contentRewriteActions" class="editor-actions" hidden><button id="applyContentRewrite" class="button primary" type="button">采用并保存</button><button id="discardContentRewrite" class="button secondary" type="button">保留原文</button></div>
+    </dialog>
+
+    <dialog id="styleMasterDialog" class="style-master-dialog" aria-labelledby="styleMasterTitle">
+      <div class="style-master-shell">
+        <header class="style-master-header">
+          <div>
+            <span id="styleMasterEyebrow" class="eyebrow">6 页母版</span>
+            <h2 id="styleMasterTitle">风格母版</h2>
+            <p id="styleMasterDescription"></p>
+          </div>
+          <button id="closeStyleMaster" class="icon-button" type="button" aria-label="关闭母版预览">×</button>
+        </header>
+        <div class="style-master-body">
+          <section class="style-master-viewer" aria-label="母版页面预览">
+            <div class="style-master-stage">
+              <img id="styleMasterPreview" alt="" />
+              <span id="styleMasterRole" class="style-master-role"></span>
+            </div>
+            <div id="styleMasterSlides" class="style-master-slides" role="tablist" aria-label="母版页面角色"></div>
+          </section>
+          <aside class="style-master-contract" aria-label="母版规则">
+            <div class="style-master-lock">
+              <span>母版规则</span>
+              <strong id="styleMasterVersion">读取中</strong>
+            </div>
+            <dl id="styleMasterRules"></dl>
+            <button id="useStyleMaster" class="button primary" type="button">选择此母版</button>
+          </aside>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+    <aside id="projectDrawer" class="project-drawer" aria-hidden="true" aria-label="项目与任务">
+      <div class="drawer-header"><div><span class="eyebrow">本机数据</span><h2>项目</h2></div><button id="closeProjects" class="icon-button" type="button" aria-label="关闭项目面板">×</button></div>
+      <div class="drawer-tools"><input id="projectSearch" type="search" placeholder="搜索项目" aria-label="搜索已有项目" autocomplete="off" /><button id="refreshProjects" class="icon-button" type="button" aria-label="刷新项目">↻</button><button id="clearAllProjects" class="button danger compact" type="button" disabled>一键清空</button></div>
+      <div class="drawer-section-heading"><strong>已有项目</strong><span id="projectCount">0</span></div>
+      <div id="projectList" class="project-list" aria-live="polite"></div>
+      <div id="projectListFooter" class="project-list-footer" hidden></div>
+      <div class="drawer-section-heading task-history-heading"><strong>任务记录</strong></div>
+      <div id="taskHistory" class="task-history empty-state">选择项目后显示任务记录。</div>
+    </aside>
+
+    <template id="projectTemplate">
+      <article class="project-row">
+        <div class="project-title"></div>
+        <div class="project-meta"></div>
+        <div class="project-row-actions">
+          <button class="button secondary select-project" type="button">打开</button>
+          <button class="button secondary compact history-project" type="button">历史</button>
+          <button class="button danger compact delete-project" type="button">删除</button>
+        </div>
+      </article>
+    </template>
+    <template id="styleTemplate">
+      <button class="style-option" type="button">
+        <span class="style-preview-frame"><img class="style-preview" loading="lazy" /><span class="style-master-count"></span></span>
+        <span class="style-option-copy"><strong></strong><small></small><span class="style-option-meta"><em>6 页母版</em><span>查看整套</span></span></span>
+      </button>
+    </template>
+  <dialog id="projectDeleteDialog" class="project-delete-dialog" aria-labelledby="projectDeleteTitle">
+    <form method="dialog" class="project-delete-shell">
+      <div>
+        <span class="eyebrow">不可撤销操作</span>
+        <h3 id="projectDeleteTitle">删除项目</h3>
+        <p id="projectDeleteDescription">项目文件与任务记录将被彻底删除。</p>
+      </div>
+      <div class="project-delete-actions">
+        <button id="cancelProjectDelete" class="button secondary" type="button">取消</button>
+        <button id="confirmProjectDelete" class="button danger" type="button">确认删除</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="anchorRegenerateDialog" class="anchor-regenerate-dialog" aria-labelledby="anchorRegenerateTitle">
+    <form id="anchorRegenerateForm" method="dialog" class="anchor-regenerate-shell">
+      <input id="anchorRegenerateKind" type="hidden" />
+      <div>
+        <span class="eyebrow">重新生成设置</span>
+        <h3 id="anchorRegenerateTitle">重新生成锚点</h3>
+        <p>先告诉 AI 这一版具体怎么改；页面内容事实与当前风格默认保持不变。</p>
+      </div>
+      <label class="anchor-regenerate-field">
+        <span>AI 修改提示词 <em>必填</em></span>
+        <textarea id="anchorRegenerateFeedback" rows="5" minlength="2" maxlength="500" required aria-describedby="anchorRegenerateHint anchorRegenerateError" aria-invalid="false" placeholder="例如：标题缩小一档并左对齐；保留蓝金配色，减少右侧装饰，让核心结论更突出。"></textarea>
+        <div class="anchor-regenerate-meta">
+          <small id="anchorRegenerateHint">请写清楚要保留什么、调整什么，至少 2 个字。</small>
+          <small id="anchorRegenerateCount">0 / 500</small>
+        </div>
+        <small id="anchorRegenerateError" class="field-error" role="alert" hidden>请先填写 AI 修改提示词。</small>
+      </label>
+      <div class="anchor-regenerate-actions">
+        <button id="anchorRegenerateCancel" class="button secondary" type="button">取消</button>
+        <button id="anchorRegenerateSubmit" class="button primary" type="submit" disabled>按提示词重新生成</button>
+      </div>
+    </form>
+  </dialog>
+    <dialog id="aiSettingsDialog" class="ai-settings-dialog" aria-labelledby="aiSettingsTitle">
+      <form id="aiSettingsForm" class="ai-settings-shell" autocomplete="off">
+        <header class="ai-settings-heading">
+          <div><h2 id="aiSettingsTitle">设置</h2><p>配置 AI 接入方式</p></div>
+          <button id="closeAiSettings" class="button secondary compact" type="button" aria-label="关闭设置">关闭</button>
+        </header>
+        <div class="ai-settings-scroll">
+        <fieldset id="aiSettingsFields" disabled>
+          <legend class="ai-settings-label">制作流程使用的 AI</legend>
+          <div class="ai-provider-options">
+            <label><input type="radio" name="aiProvider" value="local-codex" checked /><span><strong>本地 Codex</strong><small>使用本机登录账号</small></span></label>
+            <label><input type="radio" name="aiProvider" value="openai" /><span><strong>ChatGPT API</strong><small>使用 OpenAI API Key</small></span></label>
+          </div>
+          <section id="aiOpenaiPanel" class="ai-provider-panel" hidden aria-label="ChatGPT API 配置">
+            <label class="ai-settings-field">API 地址<input id="aiBaseUrl" type="url" placeholder="https://api.openai.com/v1" spellcheck="false" /><small>填写 API 基础地址，以 /v1 结尾。</small></label>
+            <label class="ai-settings-field">API Key<input id="aiApiKey" type="password" placeholder="输入 API Key" autocomplete="new-password" spellcheck="false" /><small id="aiKeyHint">密钥只保存在本机服务端，不会回显。</small></label>
+            <label class="ai-clear-key"><input id="aiClearKey" type="checkbox" />删除已保存的 API Key</label>
+            <div id="aiApiModels" hidden>
+            <div class="ai-model-toolbar">
+              <label class="ai-settings-field">搜索可用模型<input id="aiApiModelSearch" type="search" placeholder="输入模型名称筛选" /></label>
+              <button id="fetchApiModels" class="button secondary" type="button">拉取模型</button>
+            </div>
+            <p id="aiApiModelsStatus" class="ai-settings-help" role="status"></p>
+            <div class="ai-settings-pair">
+              <label class="ai-settings-field">文案与视觉分析模型<select id="aiApiModel"></select></label>
+              <label class="ai-settings-field">图片生成模型<select id="aiImageModel"></select></label>
+            </div>
+            </div>
+          </section>
+          <section id="aiCodexPanel" class="ai-provider-panel" aria-label="本地 Codex 配置">
+            <p class="ai-settings-help">使用本机已安装并登录的 Codex，无需填写 API Key。</p>
+            <label class="ai-settings-field">Codex 程序路径<input id="aiCodexBinary" type="text" placeholder="留空自动检测" spellcheck="false" /><small>留空自动检测，或填写 Codex 可执行文件的完整路径。</small></label>
+            <div class="ai-model-toolbar">
+              <input id="aiCodexModelSearch" type="hidden" value="" />
+              <button id="fetchCodexModels" class="button secondary" type="button">刷新模型</button>
+            </div>
+            <p id="aiCodexModelsStatus" class="ai-settings-help" role="status"></p>
+            <div class="ai-settings-pair">
+              <label class="ai-settings-field">Codex 模型<select id="aiCodexModel"></select></label>
+              <label class="ai-settings-field">推理强度<select id="aiCodexReasoning"><option value="low">低</option><option value="medium">中</option><option value="high">高</option><option value="xhigh">很高</option></select></label>
+            </div>
+          </section>
+        </fieldset>
+        </div>
+        <p id="aiSettingsStatus" class="ai-settings-status" role="status" aria-live="polite">正在读取配置…</p>
+        <ul id="aiSettingsChecks" class="ai-settings-checks" aria-label="接入能力检测结果" hidden></ul>
+        <footer class="ai-settings-actions">
+          <button id="testAiSettings" class="button secondary" type="button" disabled>测试连接</button>
+          <button id="saveAiSettings" class="button primary" type="submit" disabled>保存设置</button>
+        </footer>
+      </form>
+    </dialog>
+    <script type="module" src="/ai-settings.js?v=20260908-business-rules-unified-v1"></script>
+    <script type="module" src="/app.js?v=20260909-generation-feedback-v12"></script>
+  </body>
+</html>

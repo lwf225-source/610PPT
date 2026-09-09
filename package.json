@@ -1,0 +1,29 @@
+{
+  "name": "610ppt-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node v2/server/production.js",
+    "server": "node server/index.js",
+    "build": "node scripts/build-v2.mjs",
+    "preview": "PPT_V2_STATIC_DIR=dist-v2 node v2/server/production.js",
+    "check:release": "node scripts/check-release.mjs",
+    "smoke:runtime": "node scripts/smoke-runtime.mjs",
+    "test": "npm run check:release && npm run smoke:runtime"
+  },
+  "engines": {
+    "node": "^24.0.0"
+  },
+  "packageManager": "npm@11.16.0",
+  "overrides": {
+    "qs": "^6.16.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.8.0",
+    "pdfjs-dist": "^6.3.289",
+    "pptxgenjs": "^3.12.0"
+  }
+}

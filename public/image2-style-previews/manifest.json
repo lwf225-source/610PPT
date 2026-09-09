@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-07-07T15:25:25Z",
+  "assetSource": "codex-image-gen",
+  "rule": "Image2 previews must be full-page Codex Image Gen bitmaps. Do not use HTML, SVG, CSS, canvas, PPT, or script-rendered text overlays for these images.",
+  "contentSource": "腾讯 2026 Q1 官方财报",
+  "slidesPerStyle": 6,
+  "styles": [
+    {
+      "id": "image2-game-handdrawn",
+      "name": "游戏化手绘风",
+      "visualDirection": "2D hand-drawn game UI, warm parchment, quest board, bold outlines",
+      "montage": "/image2-style-previews/image2-game-handdrawn/montage.png",
+      "slides": [
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-1.png",
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-2.png",
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-3.png",
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-4.png",
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-5.png",
+        "/image2-style-previews/image2-game-handdrawn/slides/slide-6.png"
+      ]
+    },
+    {
+      "id": "image2-dark-tactical",
+      "name": "暗色战术档案风",
+      "visualDirection": "Dark tactical dossier, HUD panels, scanlines, radar grid",
+      "montage": "/image2-style-previews/image2-dark-tactical/montage.png",
+      "slides": [
+        "/image2-style-previews/image2-dark-tactical/slides/slide-1.png",
+        "/image2-style-previews/image2-dark-tactical/slides/slide-2.png",
+        "/image2-style-previews/image2-dark-tactical/slides/slide-3.png",
+        "/image2-style-previews/image2-dark-tactical/slides/slide-4.png",
+        "/image2-style-previews/image2-dark-tactical/slides/slide-5.png",
+        "/image2-style-previews/image2-dark-tactical/slides/slide-6.png"
+      ]
+    },
+    {
+      "id": "image2-consulting-poster",
+      "name": "咨询海报战略风",
+      "visualDirection": "High-end consulting poster, white-charcoal-gold palette, sparse strategic layout",
+      "montage": "/image2-style-previews/image2-consulting-poster/montage.png",
+      "slides": [
+        "/image2-style-previews/image2-consulting-poster/slides/slide-1.png",
+        "/image2-style-previews/image2-consulting-poster/slides/slide-2.png",
+        "/image2-style-previews/image2-consulting-poster/slides/slide-3.png",
+        "/image2-style-previews/image2-consulting-poster/slides/slide-4.png",
+        "/image2-style-previews/image2-consulting-poster/slides/slide-5.png",
+        "/image2-style-previews/image2-consulting-poster/slides/slide-6.png"
+      ]
+    }
+  ]
+}
