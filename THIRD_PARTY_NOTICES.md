@@ -8,4 +8,4 @@ Runtime dependencies are installed from the locked npm dependency graph:
 - PDF.js (`pdfjs-dist`) — Apache-2.0
 - PptxGenJS — MIT
 
-Their full license texts are included in installed npm packages. Generated style-preview artwork and 610PPT brand assets are covered by this repository's license and are not granted as standalone stock assets.
+Their full license texts are included in installed npm packages. Repository-authored style-preview artwork and 610PPT brand assets are covered by the repository's MIT license; third-party marks and referenced source material remain the property of their respective owners.

@@ -2,6 +2,15 @@
   "name": "610ppt-workbench",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lwf225-source/610PPT.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lwf225-source/610PPT/issues"
+  },
+  "homepage": "https://github.com/lwf225-source/610PPT#readme",
   "type": "module",
   "scripts": {
     "dev": "node v2/server/production.js",
