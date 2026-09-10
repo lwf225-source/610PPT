@@ -1,6 +1,6 @@
 {
   "version": "20260910-reference-masters-v2",
-  "sha256": "d8838e1fd4a85212866127f68978ec7b4a1d221052892c97e383bcc9dd6afae3",
+  "sha256": "ec4928fd32b1ae89fb0510d6807b3ba1861ba081110fc7bbb38ca1fa0e36b0b8",
   "files": {
     "config/business-rules.json": "158584b3126380a05610e3c91b26afd82c89d076beb5e6d244518b692882f944",
     "config/prompts/codex-analyze.md": "4a525bbfd1572d77ce64b80bfa56305068c8840b341dc644b7d8f30d9236034b",
@@ -131,7 +131,7 @@
     "server/generation-candidate.js": "16c401329b968c6fe24d3c32730842d5d92924162c5618716930de879764e0cc",
     "server/generation-diagnostics.js": "3337c596c25c5e0e6216f8c12cdd4bd94df394247303c073482766ae2c6c7e9a",
     "server/generation-qa-queue.js": "a6dcb599c74199df6e4aaac74e9b314a4487f1f93a4362edc71c41f6ff245367",
-    "server/generation.js": "c845d2768301b3476756a819bbc17de8d9b8d61bbaba5c9cff92b4b65736c67d",
+    "server/generation.js": "ceb4389efea19906a8272d253f1b4eb34ddf6ca7fd2041c78ecf202fa3703263",
     "server/image-generation-runtime.js": "74dccf0836d6fec5f18e3b2885ed586ccfeddb75ba27f6a169dac757a90179af",
     "server/index.js": "34c584e4a84f5a1f616a280dbf11427f6c6a56e6094f71f967c82c678793d5ca",
     "server/local-lease.js": "d8bdcfae8d73655806c32c7bc3e9bd65110a43ac88d2a2d923ecfce975b10292",

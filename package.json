@@ -20,7 +20,7 @@
     "check:release": "node scripts/check-release.mjs",
     "smoke:runtime": "node scripts/smoke-runtime.mjs",
     "test": "npm run check:release && npm run test:regression && npm run smoke:runtime",
-    "test:regression": "node tests/reference-style-regression.mjs && node tests/role-master-reference-regression.mjs && node tests/generation-error-reasons-regression.mjs"
+    "test:regression": "node tests/reference-style-regression.mjs && node tests/role-master-reference-regression.mjs && node tests/generation-error-reasons-regression.mjs && node tests/codex-imagegen-regression.mjs"
   },
   "engines": {
     "node": "^24.0.0"
