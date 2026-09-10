@@ -300,6 +300,15 @@ function resolveStoredPath(storedPath = "") {
   const value = String(storedPath || "");
   if (cloudMode()) return resolveCloudStoredPath(value, { dataDir: DATA_DIR, projectRoot: PROJECT_ROOT });
   if (value.startsWith(DATA_PATH_PREFIX)) return safeJoin(DATA_DIR, value.slice(DATA_PATH_PREFIX.length));
+  // Built-in style assets keep the historical `workbench/` storage prefix.
+  // When the repository is cloned as its own directory (the documented
+  // `git clone ... 610PPT` flow), WORKBENCH_DIR is the actual asset root and
+  // PROJECT_ROOT is its parent. Prefer the local asset root when it exists,
+  // while retaining the parent-relative path for embedded deployments.
+  if (value.startsWith("workbench/")) {
+    const localWorkbenchPath = safeJoin(WORKBENCH_DIR, value.slice("workbench/".length));
+    if (fssync.existsSync(localWorkbenchPath)) return localWorkbenchPath;
+  }
   return safeJoin(PROJECT_ROOT, value);
 }
 
@@ -927,7 +936,7 @@ function image2StyleReferenceAssetPaths(styleProfile = {}) {
   const montage = `${base}/montage.png`;
   const slides = Array.from({ length: 6 }, (_, index) => `${base}/slides/slide-${index + 1}.png`);
   const expected = [montage, ...slides];
-  const available = expected.filter((item) => fssync.existsSync(path.join(PROJECT_ROOT, item)));
+  const available = expected.filter((item) => fssync.existsSync(resolveStoredPath(item)));
   if (available.length !== expected.length && (hasLockedMaster || canonicalMaster)) {
     const missing = expected.filter((item) => !available.includes(item));
     throw new Error(`所选母版参考图缺失，已阻止生成：${missing.join("、")}`);
