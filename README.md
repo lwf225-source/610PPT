@@ -16,18 +16,15 @@ The current production path is intentionally narrow: **V2 local web app + Image2
 
 ## Output previews
 
-![Six consulting-poster slide previews generated for the bundled 610PPT style pack](public/image2-style-previews/image2-consulting-poster/montage.png)
-
-This montage is a bundled style preview, not a promise that every source document will produce the same layout. Two additional preview packs are available under [`public/image2-style-previews`](public/image2-style-previews).
-
-## Case gallery
-
 ### Tencent 2026 Q1 — 15 visual directions from one data story
 
 The same two-page financial narrative is explored as corporate, editorial, illustrated, spatial, game-inspired, tactical, and premium presentation systems.
 
-<p>
+<p align="center">
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="Corporate and data-brief Tencent 2026 Q1 presentation directions" width="49%"></a>
   <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="Illustrated Tencent 2026 Q1 presentation directions" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="Editorial Tencent 2026 Q1 presentation directions" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="Spatial Tencent 2026 Q1 presentation directions" width="49%"></a>
   <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="Game-inspired and premium Tencent 2026 Q1 presentation directions" width="49%"></a>
 </p>
 

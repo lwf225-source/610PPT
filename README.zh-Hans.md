@@ -16,18 +16,15 @@
 
 ## 输出预览
 
-![610PPT 咨询海报风格包内置的六页输出预览](public/image2-style-previews/image2-consulting-poster/montage.png)
-
-这是一组内置风格预览，不代表所有源文档都会生成相同版式。另有两组预览位于 [`public/image2-style-previews`](public/image2-style-previews)。
-
-## 案例展示
-
 ### 腾讯 2026 Q1：同一组内容的 15 种视觉方向
 
 固定同一组两页财务叙事，分别探索企业简报、编辑设计、插画、空间叙事、游戏化、战术科技与高端商务等视觉系统。
 
-<p>
+<p align="center">
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="腾讯 2026 Q1 企业简报与数据演示方向" width="49%"></a>
   <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="腾讯 2026 Q1 插画与场景化演示方向" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="腾讯 2026 Q1 编辑设计与海报演示方向" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="腾讯 2026 Q1 空间与建筑叙事演示方向" width="49%"></a>
   <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="腾讯 2026 Q1 游戏化与高端商务演示方向" width="49%"></a>
 </p>
 
