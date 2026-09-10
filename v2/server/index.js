@@ -1,4 +1,5 @@
 import express from "express";
+import { REFERENCE_STYLE_PACKS } from "../../shared/reference-style-catalog.js";
 import { cloudMode } from '../../server/runtime-adapter.js';
 import { createLocalAccessGuard, loadOrCreateLocalApiToken } from '../../shared/local-access.js';
 import fs from "node:fs";
@@ -37,6 +38,7 @@ const dataDir = process.env.PPT_WORKBENCH_DATA_DIR
     : path.join(os.homedir(), "Library", "Application Support", "610PPT");
 
 const STYLE_PREVIEW_DEFINITIONS = Object.freeze({
+  ...Object.fromEntries(REFERENCE_STYLE_PACKS.map(pack => [pack.id, { label: `${pack.name}六页母版`, basePath: `image2-style-previews/${pack.id}`, referenceOnly: pack.masterPreviewCount !== 6, pack } ])),
   "image2-game-handdrawn": Object.freeze({ label: "游戏化手绘风六页母版", basePath: "image2-style-previews/image2-game-handdrawn" }),
   "image2-dark-tactical": Object.freeze({ label: "暗色战术风六页母版", basePath: "image2-style-previews/image2-dark-tactical" }),
   "image2-consulting-poster": Object.freeze({ label: "咨询海报风六页母版", basePath: "image2-style-previews/image2-consulting-poster" })
@@ -267,12 +269,13 @@ function executableMasterPack() {
 function styleReferenceManifest(styleId) {
   const definition = STYLE_PREVIEW_DEFINITIONS[styleId];
   if (!definition) return null;
+  if (definition.referenceOnly) return { version: "1.0.0", styleId, usage: "style-only", montage: `workbench/public/${definition.basePath}/reference.png`, slides: {} };
   const slides = Object.fromEntries(MASTER_PAGE_ROLES.map((role, index) => [
     role.id,
     `workbench/public/${definition.basePath}/slides/slide-${index + 1}.png`
   ]));
   return {
-    version: "1.0.0",
+    version: definition.pack?.masterReferenceVersion || "1.0.0",
     styleId,
     montage: `workbench/public/${definition.basePath}/montage.png`,
     slides
@@ -347,9 +350,9 @@ function styleProfileForPack(styleProfile = {}, current = {}, referenceProfile =
     ...current,
     id,
     templateId: id,
-    name: String(styleProfile.name || current.name || id),
-    promptBase: String(styleProfile.promptBase || (current.referenceBundleId ? "" : current.promptBase) || ""),
-    primary: String(styleProfile.primary || current.primary || "#0B5EA7"),
+    name: String(STYLE_PREVIEW_DEFINITIONS[id].pack?.name || styleProfile.name || current.name || id),
+    promptBase: String(STYLE_PREVIEW_DEFINITIONS[id].pack?.promptBase || styleProfile.promptBase || (current.referenceBundleId ? "" : current.promptBase) || ""),
+    primary: String(STYLE_PREVIEW_DEFINITIONS[id].pack?.primary || styleProfile.primary || current.primary || "#0B5EA7"),
     masterPackId: masterPack.id,
     executableMasterPackId: masterPack.id,
     masterPackVersion: masterPack.version,
@@ -503,7 +506,8 @@ export function createV2App({ v1BaseUrl = process.env.PPT_V2_V1_BASE_URL || "htt
     } catch (error) { res.status(error.statusCode || 500).json({ error: error.message }); }
   });
   app.use(express.static(process.env.PPT_V2_STATIC_DIR || path.join(V2_DIR, "public")));
-  // Expose only the browser-safe contract, never the entire shared directory.
+  // Expose only browser-safe modules, never the entire shared directory.
+  if (!process.env.PPT_V2_STATIC_DIR) app.get("/shared/reference-style-catalog.js", (_req, res) => res.sendFile(path.join(WORKBENCH_DIR, "shared/reference-style-catalog.js")));
   if (!process.env.PPT_V2_STATIC_DIR) app.get("/shared/task-lifecycle-contract.js", (_req, res) => res.sendFile(path.resolve(V2_DIR, "..", "shared", "task-lifecycle-contract.js")));
   if (!process.env.PPT_V2_STATIC_DIR) app.get("/shared/task-domain-reducer.js", (_req, res) => res.sendFile(path.resolve(V2_DIR, "..", "shared", "task-domain-reducer.js")));
 
@@ -671,8 +675,11 @@ export function createV2App({ v1BaseUrl = process.env.PPT_V2_V1_BASE_URL || "htt
     const masterPack = executableMasterPack();
     res.json({
       styleId: req.params.styleId,
-      previewCount: MASTER_PAGE_ROLES.length,
-      roles: MASTER_PAGE_ROLES,
+      previewCount: definition.referenceOnly ? 1 : MASTER_PAGE_ROLES.length,
+      referenceOnly: Boolean(definition.referenceOnly),
+      styleSystem: definition.pack?.styleSystem,
+      roleGuidance: definition.pack?.roleGuidance,
+      roles: definition.referenceOnly ? [{ id: "reference", label: "风格参考" }] : MASTER_PAGE_ROLES,
       masterPack: {
         id: req.params.styleId,
         executablePackId: masterPack.id,
@@ -689,16 +696,16 @@ export function createV2App({ v1BaseUrl = process.env.PPT_V2_V1_BASE_URL || "htt
   app.get("/api/v2/style-previews/:styleId/slides/:slideNumber", (req, res) => {
     const definition = STYLE_PREVIEW_DEFINITIONS[req.params.styleId];
     const slideNumber = Number(req.params.slideNumber);
-    if (!definition || !Number.isInteger(slideNumber) || slideNumber < 1 || slideNumber > MASTER_PAGE_ROLES.length) {
+    if (!definition || !Number.isInteger(slideNumber) || slideNumber < 1 || slideNumber > (definition.referenceOnly ? 1 : MASTER_PAGE_ROLES.length)) {
       return res.status(404).json({ error: "未找到该母版页面" });
     }
-    sendStylePreviewImage(res, `${definition.basePath}/slides/slide-${slideNumber}.png`);
+    sendStylePreviewImage(res, definition.referenceOnly ? `${definition.basePath}/reference.png` : `${definition.basePath}/slides/slide-${slideNumber}.png`);
   });
 
   app.get("/api/v2/style-previews/:styleId", (req, res) => {
     const definition = STYLE_PREVIEW_DEFINITIONS[req.params.styleId];
     if (!definition) return res.status(404).json({ error: "未找到该母版预览" });
-    sendStylePreviewImage(res, `${definition.basePath}/montage.png`);
+    sendStylePreviewImage(res, `${definition.basePath}/${definition.referenceOnly ? "reference" : "montage"}.png`);
   });
 
   app.post("/api/v2/projects/:slug/style", async (req, res) => {

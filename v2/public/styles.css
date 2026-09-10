@@ -780,9 +780,9 @@ body.image2-anchor-workspace .step-button { min-height: 44px; }
 .anchor-panel-actions .button.primary { min-width: 220px; }
 .anchor-primary-actions { display: flex; align-items: stretch; justify-content: flex-end; gap: 10px; min-width: 0; }
 .anchor-primary-actions .button { flex: 1 1 auto; min-width: 0; white-space: nowrap; }
-.anchor-primary-actions .direct-export { border-color: #d7a629; background: #fffaf0; color: #8a6412; }
+.anchor-primary-actions .checked-export { border-color: #d7a629; background: #fffaf0; color: #8a6412; }
 .anchor-primary-actions .stop-generation { border-color: #c34b40; color: #a52d24; background: #fff7f5; }
-.anchor-primary-actions .direct-export:hover { border-color: #bc881c; background: #fff5d9; }
+.anchor-primary-actions .checked-export:hover:not(:disabled) { border-color: #bc881c; background: #fff5d9; color: #8a6412; }
 .step-action-dock.no-secondary {
   grid-template-columns: minmax(150px, .6fr) minmax(300px, 1.5fr) minmax(240px, auto);
 }

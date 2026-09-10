@@ -34,6 +34,10 @@ export function image2UploadedStyleSystem(profile = {}, fallback = {}) {
 export function selectImage2ReferenceForRole(profile = {}, bible = {}, role = "content") {
   const manifest = bible.referenceManifest || profile.referenceManifest || {};
   const paths = bible.referenceAssetPaths || profile.referenceAssetPaths || [];
+  if (manifest.usage === "style-only") return {
+    role, layoutPath: null, identityOnly: true,
+    paths: [manifest.montage, ...paths].filter((item, index, items) => item && items.indexOf(item) === index).slice(0, 3)
+  };
   const slides = manifest.slides || {};
   const custom = isCustomImage2Reference(profile);
   const exact = slides[role];

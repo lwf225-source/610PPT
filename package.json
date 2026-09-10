@@ -19,7 +19,8 @@
     "preview": "PPT_V2_STATIC_DIR=dist-v2 node v2/server/production.js",
     "check:release": "node scripts/check-release.mjs",
     "smoke:runtime": "node scripts/smoke-runtime.mjs",
-    "test": "npm run check:release && npm run smoke:runtime"
+    "test": "npm run check:release && npm run test:regression && npm run smoke:runtime",
+    "test:regression": "node tests/reference-style-regression.mjs && node tests/role-master-reference-regression.mjs && node tests/generation-error-reasons-regression.mjs"
   },
   "engines": {
     "node": "^24.0.0"

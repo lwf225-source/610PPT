@@ -1,3 +1,4 @@
+import { REFERENCE_STYLE_PACKS } from "/shared/reference-style-catalog.js?v=20260910-reference-masters-v2";
 import { plainTextDraft } from "./plain-copy.js?v=20260906-plain-copy-v1";
 import { createStyleReferenceUpload } from "./style-reference-upload.js?v=20260907-ai-models-v1";
 import { renderReferencePreview, referencePreviewUrl } from "./reference-preview.js";
@@ -120,6 +121,7 @@ const contentDetailOptions = [
 ];
 
 const stylePacks = [
+  ...REFERENCE_STYLE_PACKS,
   { id: "image2-game-handdrawn", name: "游戏化手绘风", description: "游戏分享、复盘、强记忆点页面", primary: "#E87817", previewId: "image2-game-handdrawn", promptBase: "2D 游戏手绘信息图，整页视觉叙事，统一标题组件与画面锚点" },
   { id: "image2-dark-tactical", name: "暗色战术风", description: "游戏业务、策略复盘、沉浸式展示", primary: "#18D1C0", previewId: "image2-dark-tactical", promptBase: "暗色战术信息图，深色底，青绿色信息层，整页视觉一致" },
   { id: "image2-consulting-poster", name: "咨询海报风", description: "观点表达、策略汇报、视觉封面", primary: "#BE5B31", previewId: "image2-consulting-poster", promptBase: "咨询海报式整页信息图，强标题、少文字、重点数字与空间秩序" }
@@ -748,6 +750,11 @@ function updateActions() {
     const allPagesVisible = pages.length > 0 && pages.every((page) => Boolean(pageImagePath(page)));
     directExportButton.hidden = state.activeStep !== 4
       || !allPagesVisible;
+    if (remainingButton) {
+      remainingButton.classList.toggle("primary", directExportButton.hidden);
+      remainingButton.classList.toggle("secondary", !directExportButton.hidden);
+      remainingButton.classList.toggle("checked-export", !directExportButton.hidden);
+    }
     directExportButton.disabled = !hasProject || !image2AnchorsConfirmed() || step4Busy || Boolean(state.qaActionBusy);
     directExportButton.textContent = state.task?.kind === "direct-export" && state.task?.export?.path
       ? "再次直接导出"
@@ -905,6 +912,19 @@ function image2FailurePresentation(page = {}) {
   }
   // A failed repair or unavailable reviewer is not a second visual rejection.
   // Older jobs only expose a wrapped error string, so inspect the cause first.
+  if (!qualityCheck && /^(?:Codex\s+)?(?:(?:生图|生成)失败[：:]\s*)?(?:Codex\s+)?(?:退出码\s*\d+|(?:生图\s+)?exited with code\s*\d+)\s*$/i.test(detail)) {
+    return {
+      category: "unknown-error",
+      label: "生成失败",
+      summary: "Codex 执行异常结束，旧任务记录未保存具体原因，无法仅凭退出码判断。请查看当时的本地连接器日志。",
+      detail
+    };
+  }
+  // Put the actual provider/connector cause directly on the card; a retained
+  // preview alone does not mean that this attempt reached visual QA.
+  if (!qualityCheck && /^Codex\s/.test(detail)) {
+    return { category: "generation-error", label: "生成失败", summary: detail, detail: "" };
+  }
   if (/超时|timed?\s*out|timeout/i.test(`${code} ${detail}`)) {
     const redraw = qualityCheck && /生图|重绘|修正|RETRY_ERROR/i.test(`${code} ${detail}`);
     return {
@@ -1792,12 +1812,12 @@ function styleMasterSlideUrl(pack, slideIndex) {
 }
 
 function renderStyleMasterSlides(pack, roles = masterPageRoles) {
-  const normalizedRoles = roles.length === masterPageRoles.length ? roles : masterPageRoles;
+  const normalizedRoles = (pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? [{ id: "reference", label: "风格参考" }] : roles.length ? roles : masterPageRoles;
   const selectedIndex = Math.max(0, Math.min(normalizedRoles.length - 1, state.stylePreviewSlideIndex));
   state.stylePreviewSlideIndex = selectedIndex;
   const preview = $("styleMasterPreview");
   preview.src = styleMasterSlideUrl(pack, selectedIndex);
-  preview.alt = `${pack.name} ${normalizedRoles[selectedIndex].label}母版预览`;
+  preview.alt = `${pack.name} ${normalizedRoles[selectedIndex].label}${(pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? "" : "母版预览"}`;
   $("styleMasterRole").textContent = `${String(selectedIndex + 1).padStart(2, "0")} · ${normalizedRoles[selectedIndex].label}`;
 
   const slides = $("styleMasterSlides");
@@ -1832,7 +1852,15 @@ function renderStyleMasterRules(meta) {
     : `${routeLabel} · v${masterPackVersion}`;
   const rules = $("styleMasterRules");
   rules.replaceChildren();
-  const contract = masterPack?.contract || {};
+  // Display a compact summary; the full contract and per-style generation rules
+  // remain in the server payload and are not changed by this presentation layer.
+  const contract = masterPack?.contract ? {
+    layoutSystem: "整页视觉图；构图按内容变化，配色与材质整套统一。",
+    titleAnchor: "正文标题的组件、字高、位置和颜色固定；封面独立构图。",
+    typography: "标题、正文、数字与页脚统一层级；长文只换行，不改文案、不缩字。",
+    spacing: "固定安全边距与信息密度；底部结论按内容需要使用。",
+    anchor: "先确认封面和首张正文，再沿用整套视觉规范。"
+  } : {};
   Object.entries(masterContractLabels).forEach(([key, label]) => {
     if (!contract[key]) return;
     const row = document.createElement("div");
@@ -1854,9 +1882,9 @@ async function openStyleMasterDialog(pack) {
   updateActions();
 
   const dialog = $("styleMasterDialog");
-  $("styleMasterEyebrow").textContent = "AI 整页视觉 · 6 页母版";
+  $("styleMasterEyebrow").textContent = (pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? "AI 整页视觉 · 风格参考与页面规则" : "AI 整页视觉 · 6 页母版";
   $("styleMasterTitle").textContent = pack.name;
-  $("styleMasterDescription").textContent = `${pack.description}。样张内容统一使用腾讯 2026 Q1 财报。`;
+  $("styleMasterDescription").textContent = (pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? `${pack.description}。参考图用于配色、字体与排版，生成内容以当前 PPT 文案为准。` : `${pack.description}。样张内容统一使用腾讯 2026 Q1 财报。${pack.sampleNote || ""}`;
   $("useStyleMaster").dataset.styleId = pack.id;
   renderStyleMasterRules(null);
   renderStyleMasterSlides(pack);
@@ -3306,12 +3334,16 @@ function renderStylePanel() {
     const button = fragment.querySelector(".style-option");
     button.classList.toggle("selected", pack.id === selectedId);
     const image = button.querySelector(".style-preview");
-    image.src = resourceUrl(`/api/v2/style-previews/${encodeURIComponent(pack.previewId)}`);
-    image.alt = `${pack.name} 六页母版总览`;
-    button.querySelector(".style-master-count").textContent = "6 页母版";
+    image.src = styleMasterSlideUrl(pack, 0);
+    image.alt = `${pack.name} 封面预览`;
+    button.querySelector(".style-master-count").textContent = (pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? "风格包 · 6 类页面" : "6 页母版";
+    if ((pack.sourceImageNumber && pack.masterPreviewCount !== 6)) {
+      button.querySelector(".style-option-meta em").textContent = "参考图 + 页面规则";
+      button.querySelector(".style-option-meta > span").textContent = "查看风格";
+    }
     button.querySelector("strong").textContent = pack.name;
     button.querySelector("small").textContent = pack.description;
-    button.setAttribute("aria-label", `查看并选择${pack.name}六页母版`);
+    button.setAttribute("aria-label", `查看并选择${pack.name}${(pack.sourceImageNumber && pack.masterPreviewCount !== 6) ? "风格包" : "六页母版"}`);
     button.addEventListener("click", () => {
       void openStyleMasterDialog(pack);
     });

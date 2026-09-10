@@ -14,6 +14,7 @@ try {
   await fs.mkdir(path.join(staging, "shared"), { recursive: true });
   await fs.copyFile(path.join(root, "shared", "task-lifecycle-contract.js"), path.join(staging, "shared", "task-lifecycle-contract.js"));
   await fs.copyFile(path.join(root, "shared", "task-domain-reducer.js"), path.join(staging, "shared", "task-domain-reducer.js"));
+  await fs.copyFile(path.join(root, "shared/reference-style-catalog.js"), path.join(staging, "shared/reference-style-catalog.js"));
   const files = {};
   async function collect(directory) {
     for (const entry of await fs.readdir(directory, { withFileTypes: true })) {

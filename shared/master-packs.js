@@ -1,3 +1,5 @@
+import { REFERENCE_STYLE_PACKS } from "./reference-style-catalog.js";
+
 export const MASTER_PACK_ROLES = [
   "cover",
   "directory",
@@ -12,7 +14,7 @@ const PACKS = [
     id: "image2-dark-tactical",
     version: "1.0.0",
     label: "Image2 语义角色母版",
-    styleIds: ["image2-dark-tactical", "image2-game-handdrawn", "image2-consulting-poster"],
+    styleIds: [...REFERENCE_STYLE_PACKS.map(pack => pack.id), "image2-dark-tactical", "image2-game-handdrawn", "image2-consulting-poster"],
     roles: {
       cover: { label: "封面", layouts: ["cover"] },
       directory: { label: "目录", layouts: ["agenda"] },

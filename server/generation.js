@@ -420,15 +420,17 @@ async function runLocalCodexImageGeneration(job, deck) {
       ? await recoverGeneratedImageAfterProcessError(runtimeOutputPath)
       : false;
     const logPath = path.join(generationLogsDir, `${job.pageNo}-${startedAt.toISOString().replace(/[:.]/g, "-")}.log`);
+    const failureReason = processError ? codexActionErrorMessage(processError, "生图") : "";
     const logContent = JSON.stringify(generationDiagnostic({ job, startedAt, prompt,
       references: resolvedReferencePaths, result: processResult, error: processError,
+      failureReason,
       recovered: recoveredAfterProcessError || recoveredHandoff,
       runtimePolicy,
       timing: telemetry.snapshot() }), null, 2);
     await fs.writeFile(logPath, logContent, { encoding: "utf8", mode: 0o600, flag: "wx" }).catch(() => {});
     trimGenerationLogs(generationLogsDir).catch(() => {});
     execution?.signal.throwIfAborted();
-    if (processError && !recoveredAfterProcessError) throw new Error(codexActionErrorMessage(processError, "生图"));
+    if (processError && !recoveredAfterProcessError) throw new Error(failureReason);
     validateGeneratedImageFile(runtimeOutputPath);
     await fs.copyFile(runtimeOutputPath, outputPath, fssync.constants.COPYFILE_EXCL);
     await fs.chmod(outputPath, 0o600);
@@ -1027,7 +1029,7 @@ function buildGenerationJob(page, index, deck, previousJob = null, options = {})
               : "content");
   const manifest = styleBible?.referenceManifest || {};
   const customReference = isCustomImage2Reference(deck.styleProfile);
-  const customSelection = customReference ? selectImage2ReferenceForRole(deck.styleProfile, styleBible, normalizedRole) : null;
+  const customSelection = customReference || manifest.usage === "style-only" ? selectImage2ReferenceForRole(deck.styleProfile, styleBible, normalizedRole) : null;
   const roleMatchedStyleReferencePath = manifest.slides?.[normalizedRole]
     || (isCoverRole ? builtInStyleReferencePaths[0] : builtInStyleReferencePaths[1])
     || builtInStyleReferencePaths[0];
@@ -1074,7 +1076,7 @@ function buildGenerationJob(page, index, deck, previousJob = null, options = {})
     selectedStyleReferenceSignature,
     referenceBundleId: deck.styleProfile?.referenceBundleId || null,
     referenceVersion: deck.styleProfile?.referenceVersion || null,
-    referenceLayoutPath: customSelection?.layoutPath || null,
+    referenceLayoutPath: customSelection ? customSelection.layoutPath : manifest.slides?.[normalizedRole] || null,
     referenceIdentityOnly: customSelection?.identityOnly || false,
     styleReferencePaths,
     typographyReferencePath: styleBible?.typographyReferenceAssetPath || null,

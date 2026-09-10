@@ -8,6 +8,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- Eleven visual style packs with six role-specific page masters each, plus reference images and style rules.
+- Regression coverage for style identity, role-specific references and generation failure handling.
+
+### Fixed
+
+- Preserve confirmed body masters while supplying the matching page-role reference.
+- Show classified generation failures without persisting unclassified provider text or personal details.
+- Remove developer-specific identifiers from release checks and detect common credential formats.
+
+### Documentation
+
 - Bilingual case gallery for the Tencent 2026 Q1 two-page data story, covering 15 paired visual directions across five montages.
 
 ### Planned

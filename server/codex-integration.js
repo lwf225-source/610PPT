@@ -1032,7 +1032,7 @@ function compactOutlineForVisualPlan(outline = {}) {
 }
 
 function uploadedReferencePlanImages(styleProfile = {}, styleBible = {}) {
-  if (!isCustomImage2Reference(styleProfile)) return [];
+  if (!isCustomImage2Reference(styleProfile) && styleBible.referenceManifest?.usage !== "style-only") return [];
   const manifest = styleBible.referenceManifest || styleProfile.referenceManifest || {};
   const items = [
     ...Object.entries(manifest.slides || {}).map(([role, storedPath]) => ({ role, storedPath })),
@@ -1532,9 +1532,14 @@ function codexActionErrorMessage(error, action = "拆分") {
         if (stream === "stderr" && line.trim() && !/^\s*[\[{]/.test(line)) stderrLines.push(line.trim());
         continue;
       }
-      if (event?.type === "error" || event?.type === "turn.failed") {
-        const detail = event.error?.message || event.message || (typeof event.error === "string" ? event.error : "");
-        if (typeof detail === "string" && detail.trim()) structuredErrors.push(detail.trim());
+      if (["error", "turn.failed", "response.failed"].includes(event?.type)) {
+        const failure = event.error || event.response?.error;
+        const detail = failure?.message || event.message || (typeof failure === "string" ? failure : "");
+        // Provider codes can carry the only actionable cause. Never inspect
+        // arbitrary tool output or agent prose as a provider diagnostic.
+        const code = typeof failure?.code === "string" && /^[a-zA-Z0-9_.-]{1,80}$/.test(failure.code) ? failure.code : "";
+        const diagnostic = [code, typeof detail === "string" ? detail.trim() : ""].filter(Boolean).join(": ");
+        if (diagnostic) structuredErrors.push(diagnostic);
       }
       if (event?.type === "item.completed" && event.item?.type === "agent_message") {
         // Only extract this specific handoff signal; never display agent text.
@@ -1550,16 +1555,47 @@ function codexActionErrorMessage(error, action = "拆分") {
   const imageHandoffMessage = "Codex 生图结果未回传：未收到可读取的图片文件，等待人工确认。任务记录已保留，不会自动重新生图。";
   if (action === "生图" && missingOutput) return imageHandoffMessage;
   const classify = (message) => {
+    if (/No online local Codex connector|connector (?:is )?offline|连接器离线/i.test(message)) {
+      return `Codex ${action}未开始：本地连接器离线。请打开连接器，并保持电脑联网、唤醒。`;
+    }
+    if (/PPT connector:\s*ENOENT:\s*no such file or directory/i.test(message)) {
+      return `Codex ${action}未开始：云端转交时找不到引用的文件，请检查附件是否已上传。文档正文已保留。`;
+    }
     // 不要用裸 auth/token 匹配；has_authorization_header=false 不代表未登录。
     if (/(?:not\s+logged\s*in|please\s+log\s*in|login\s+required|authentication\s+required|unauthorized|invalid\s+(?:api\s+)?token|token\s+(?:expired|invalid)|oauth[^\n]*(?:failed|expired|invalid)|(?:status\s*code|http)\s*401)/i.test(message)) {
       return "Codex 未连接或未登录。请先在本机 Codex 完成登录，然后重试。";
+    }
+    if (/insufficient_quota|quota(?:\s|_).*(?:exceed|exhaust|insufficient)|(?:exceed|exhaust).*quota|usage[ _-]limit|hit your usage limit|credit.*(?:exhaust|insufficient)|配额(?:不足|耗尽)|额度(?:不足|用尽)/i.test(message)) {
+      return `Codex ${action}失败：当前账号可用额度不足或已达到使用上限。请查看 Codex 用量及恢复时间。`;
+    }
+    if (/rate[ _-]?limit|too many requests|\b429\b|请求过于频繁/i.test(message)) {
+      return `Codex ${action}被限流：请求过于频繁，请稍后再试。`;
+    }
+    if (/model_not_found|unsupported_model|model.*(?:does not exist|not found|not supported|not available|do not have access)|(?:unsupported|unknown) model/i.test(message)) {
+      return `Codex ${action}失败：当前模型不可用或账号无权使用，请检查 AI 设置中的模型。`;
+    }
+    if (/content_policy_violation|safety_violation|blocked by.*(?:policy|safety)|rejected.*(?:policy|safety)/i.test(message)) {
+      return `Codex ${action}被模型服务拒绝：内容或参考图未通过安全检查，请调整后再试。`;
+    }
+    if (/\b403\b|permission denied|access denied|forbidden/i.test(message)) {
+      return `Codex ${action}失败：访问被拒绝，请检查账号权限及文件访问权限。`;
     }
     if (/127\.0\.0\.1:3000\/mcp|MCP startup failed|failed to initialize MCP/i.test(message)) {
       return `Codex ${action}启动时加载了不可用的本地扩展。请重试；工作台会使用隔离运行配置。`;
     }
     // A real process timeout takes precedence over incidental schema diagnostics.
     if (/timeout|timed\s*out|超时|Task exceeded \d+ ms execution limit/i.test(message)) {
+      if (action === "生图") return "Codex 生图超时：执行或结果回传超过等待时限。请先确认本次是否已有图片；未自动重新生图。";
       return `Codex ${action}超时。当前文档与页数设置已保留，请直接重试。`;
+    }
+    if (/\b50[0234]\b|internal_server_error|internal server error|service[ _]unavailable|server[ _]overloaded|bad gateway/i.test(message)) {
+      return `Codex ${action}失败：模型服务暂时异常，请稍后再试。`;
+    }
+    if (/ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|fetch failed|network error|reconnect|stream disconnected|connection (?:reset|closed|refused)|socket hang up/i.test(message)) {
+      return `Codex ${action}连接中断：无法连接服务或响应传输中断。请检查网络与本地连接器状态。`;
+    }
+    if (/ENOSPC|no space left on device/i.test(message)) {
+      return `Codex ${action}失败：执行端磁盘空间不足，无法保存文件，请清理空间后再试。`;
     }
     if (action === "拆分" && /output schema|schema|invalid json|JSON/i.test(message)) {
       return "Codex 返回格式没有通过 PageIR 校验，请重试一次。";
@@ -1572,7 +1608,6 @@ function codexActionErrorMessage(error, action = "拆分") {
   // A specific process failure is authoritative. Only consult provider error
   // events/stderr when the process wrapper has no useful failure of its own.
   const genericProcessMessage = !explicitMessage || /^(?:Codex|Connector|Process|Generation|生图)[^\n]{0,30}(?:failed|失败|error|exited|退出码)(?:[.:：\s]|$)/i.test(explicitMessage);
-  const secondaryMessage = structuredErrors.at(-1) || stderrLines.join("\n");
   if (genericProcessMessage) {
     // The remote adapter reports handoff failures on stderr while its process
     // wrapper only says "Codex 生图 exited with code 1". Extract the known
@@ -1580,17 +1615,18 @@ function codexActionErrorMessage(error, action = "拆分") {
     const missingAdapterOutput = [...structuredErrors, ...stderrLines].some((message) =>
       /Connector did not return all requested outputs|等待人工确认[：:]\s*本次任务未找到已保存的\s*PNG\s*图片/i.test(message));
     if (action === "生图" && missingAdapterOutput) return imageHandoffMessage;
-    const secondaryClassification = classify(secondaryMessage);
+    const secondaryClassification = [...structuredErrors].reverse().map(classify).find(Boolean) || classify(stderrLines.join("\n"));
     if (secondaryClassification) return secondaryClassification;
     if (action === "生图" && missingImageHandoff) return imageHandoffMessage;
   }
   const detail = (genericProcessMessage ? structuredErrors.at(-1) || stderrLines.find((line) => /\b(?:error|fatal|failed)\b/i.test(line)) || explicitMessage : explicitMessage) || "执行未完成，请查看诊断记录。";
-  const safeDetail = String(detail)
-    .replace(/\bBearer\s+[^\s,;]+/gi, "Bearer [已隐藏]")
-    .replace(/\b(?:sk|sess)-[A-Za-z0-9_-]+/g, "[已隐藏]")
-    .replace(/((?:api[_-]?key|access[_-]?token|refresh[_-]?token|token|password|authorization)\s*[=:]\s*)[^\s,;]+/gi, "$1[已隐藏]")
-    .replace(/(https?:\/\/)[^\s/@]+:[^\s/@]+@/gi, "$1[已隐藏]@");
-  return `Codex ${action}失败：${cleanMessage(safeDetail).replace(/\s+/g, " ").slice(0, 360)}`;
+  if (genericProcessMessage && /^(?:Codex|Connector|Process|Generation|生图)[^\n]{0,30}(?:failed|失败|error|exited|退出码)(?:[.:：\s]|$)/i.test(detail)) {
+    const exitCode = String(error?.code ?? "").match(/^\d{1,3}$/)?.[0] || detail.match(/(?:退出码\s*|(?:exit(?:ed)?(?: with)?(?: code)?)\s*)(\d{1,3})(?!\d)/i)?.[1];
+    return `Codex ${action}异常结束${exitCode ? `（退出码 ${exitCode}）` : ""}：执行端未返回具体原因。请查看本次任务诊断记录及本地连接器日志。`;
+  }
+  // Unknown provider messages may contain document excerpts, personal paths or
+  // account details. Only classified fixed copy can reach cards and diagnostics.
+  return `Codex ${action}失败：执行端返回了无法分类的错误。原始信息未展示，以免泄露文档或账号信息。`;
 }
 
 function buildCodexExecBaseArgs({
@@ -1955,6 +1991,7 @@ async function runCodexImage2VisualAudit(prompt, pageCount, images = []) {
       } catch (error) {
         lastError = error;
         if (error.code === "ENOENT") continue;
+        error.message = codexActionErrorMessage(error, "整套视觉校验");
         throw error;
       }
     }
@@ -2001,6 +2038,7 @@ async function runCodexImage2VisualMasterAudit(prompt, images = []) {
       } catch (error) {
         lastError = error;
         if (error.code === "ENOENT") continue;
+        error.message = codexActionErrorMessage(error, "页面视觉校验");
         throw error;
       }
     }

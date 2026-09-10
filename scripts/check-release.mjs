@@ -30,11 +30,16 @@ for (const requiredControl of ["610ppt-imagegen-runtime-", "features.shell_tool=
 }
 if (/--add-dir/.test(generation) || !generation.includes('localCodexImagePrompt(job, "final.png")')) throw new Error("Codex 生图仍暴露项目输出目录");
 
+// Generic privacy rules avoid embedding a developer's own identity in the checker.
 const forbidden = [
-  new RegExp(["", "Users", "tiger"].join("/"), "i"),
-  new RegExp(["tiger", "(?:local|192\\.168\\.)"].join("@"), "i"),
-  new RegExp(["com", "tiger", "610ppt"].join("\\."), "i"),
-  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/
+  new RegExp(["", "(?:Users|home)", "[a-z0-9_.-]+", ""].join("/"), "i"),
+  /[a-z]:\\Users\\[^\\\s"']+\\/i,
+  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
+  /\bgh[pousr]_[A-Za-z0-9]{20,}\b/,
+  /\bgithub_pat_[A-Za-z0-9_]{20,}\b/,
+  /\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b/,
+  /\bAKIA[A-Z0-9]{16}\b/,
+  /\beyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/
 ];
 const textExtensions = new Set([".js", ".mjs", ".cjs", ".json", ".md", ".css", ".html", ".zsh", ".sh", ".ps1", ".plist", ".yml", ".yaml"]);
 const excluded = new Set([".git", "node_modules", "dist-v2"]);
@@ -50,7 +55,7 @@ function walk(directory) {
       if (stat.size > 50 * 1024 * 1024) throw new Error(`单文件超过 50MB：${path.relative(root, absolute)}`);
       if (!textExtensions.has(path.extname(entry.name).toLowerCase()) && entry.name !== "LICENSE") continue;
       const source = fs.readFileSync(absolute, "utf8");
-      for (const pattern of forbidden) if (pattern.test(source)) throw new Error(`发现发布禁用内容 ${pattern}：${path.relative(root, absolute)}`);
+      for (const pattern of forbidden) if (pattern.test(source)) throw new Error(`发现发布禁用内容（规则 ${forbidden.indexOf(pattern) + 1}）：${path.relative(root, absolute)}`);
       filesChecked += 1;
     }
   }
