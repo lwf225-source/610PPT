@@ -20,6 +20,21 @@
 
 这是一组内置风格预览，不代表所有源文档都会生成相同版式。另有两组预览位于 [`public/image2-style-previews`](public/image2-style-previews)。
 
+## 案例展示
+
+### 腾讯 2026 Q1：同一组内容的 15 种视觉方向
+
+固定同一组两页财务叙事，分别探索企业简报、编辑设计、插画、空间叙事、游戏化、战术科技与高端商务等视觉系统。
+
+<p>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="腾讯 2026 Q1 插画与场景化演示方向" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="腾讯 2026 Q1 游戏化与高端商务演示方向" width="49%"></a>
+</p>
+
+[查看五张拼图中的全部 30 张案例页面 →](docs/showcase/tencent-2026-q1/README.md)
+
+这些图片用于展示视觉探索。对外发布前，仍需逐项复核数字、文案、生成文字和品牌规范。
+
 ## 快速了解
 
 | 问题 | 答案 |
@@ -142,6 +157,7 @@ shared/       文案、叙事、视觉和任务协议
 v2/           本地网页与持久任务服务
 config/       提示词、业务规则和视觉规则
 public/       内置风格与字体预览资产
+docs/         案例展示与项目补充文档
 scripts/      构建、安装、运行冒烟和发布检查
 assets/       跨平台应用图标
 ```
@@ -201,6 +217,7 @@ GitHub Actions 会在 macOS 和 Windows 上重复执行干净依赖安装、构�
 - [源码](https://github.com/lwf225-source/610PPT)
 - [发布检查](https://github.com/lwf225-source/610PPT/actions/workflows/ci.yml)
 - [版本记录](CHANGELOG.md)
+- [案例展示](docs/showcase/README.md)
 - [贡献指南](CONTRIBUTING.md)
 - [安全策略](SECURITY.md)
 - [MIT 许可证](LICENSE)

@@ -20,6 +20,21 @@ The current production path is intentionally narrow: **V2 local web app + Image2
 
 This montage is a bundled style preview, not a promise that every source document will produce the same layout. Two additional preview packs are available under [`public/image2-style-previews`](public/image2-style-previews).
 
+## Case gallery
+
+### Tencent 2026 Q1 — 15 visual directions from one data story
+
+The same two-page financial narrative is explored as corporate, editorial, illustrated, spatial, game-inspired, tactical, and premium presentation systems.
+
+<p>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="Illustrated Tencent 2026 Q1 presentation directions" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="Game-inspired and premium Tencent 2026 Q1 presentation directions" width="49%"></a>
+</p>
+
+[Explore all 30 slide images across five montages →](docs/showcase/tencent-2026-q1/README.md)
+
+These images demonstrate visual exploration. Review every figure, line of copy, generated word, and brand treatment before external publication.
+
 ## At a glance
 
 | Question | Answer |
@@ -142,6 +157,7 @@ shared/       copy, narrative, visual, and task contracts
 v2/           local web UI and durable task service
 config/       prompts, business rules, and visual rules
 public/       bundled style and typography preview assets
+docs/         case studies and supporting project documentation
 scripts/      build, install, runtime smoke, and release checks
 assets/       cross-platform application icons
 ```
@@ -205,6 +221,7 @@ Yes. Configure the API base URL, text model, image model, and API key in the set
 - [Source code](https://github.com/lwf225-source/610PPT)
 - [Release checks](https://github.com/lwf225-source/610PPT/actions/workflows/ci.yml)
 - [Version history](CHANGELOG.md)
+- [Case gallery](docs/showcase/README.md)
 - [Contribution guide](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 - [MIT license](LICENSE)

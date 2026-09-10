@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- Bilingual case gallery for the Tencent 2026 Q1 two-page data story, covering 15 paired visual directions across five montages.
+
 ### Planned
 
 - Continue real-device validation for source installers and generated PPTX output.
