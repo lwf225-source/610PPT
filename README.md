@@ -16,16 +16,16 @@ The current production path is intentionally narrow: **V2 local web app + Image2
 
 ## Output previews
 
-### Tencent 2026 Q1 — 15 visual directions from one data story
+### Example gallery
 
-The same two-page financial narrative is explored as corporate, editorial, illustrated, spatial, game-inspired, tactical, and premium presentation systems.
+Example outputs showing how the same source can be explored across different visual directions.
 
 <p align="center">
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="Corporate and data-brief Tencent 2026 Q1 presentation directions" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="Illustrated Tencent 2026 Q1 presentation directions" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="Editorial Tencent 2026 Q1 presentation directions" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="Spatial Tencent 2026 Q1 presentation directions" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="Game-inspired and premium Tencent 2026 Q1 presentation directions" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="Corporate and data-brief presentation examples" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="Illustrated presentation examples" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="Editorial presentation examples" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="Spatial presentation examples" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="Game-inspired and premium presentation examples" width="49%"></a>
 </p>
 
 [Explore all 30 slide images across five montages →](docs/showcase/tencent-2026-q1/README.md)

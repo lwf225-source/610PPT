@@ -16,16 +16,16 @@
 
 ## 输出预览
 
-### 腾讯 2026 Q1：同一组内容的 15 种视觉方向
+### 案例示意
 
-固定同一组两页财务叙事，分别探索企业简报、编辑设计、插画、空间叙事、游戏化、战术科技与高端商务等视觉系统。
+以下示例用于展示同一份源内容在不同视觉方向下的输出效果。
 
 <p align="center">
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="腾讯 2026 Q1 企业简报与数据演示方向" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="腾讯 2026 Q1 插画与场景化演示方向" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="腾讯 2026 Q1 编辑设计与海报演示方向" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="腾讯 2026 Q1 空间与建筑叙事演示方向" width="49%"></a>
-  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="腾讯 2026 Q1 游戏化与高端商务演示方向" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/01-corporate-directions.jpg" alt="企业简报与数据演示案例" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/02-illustrated-directions.jpg" alt="插画与场景化演示案例" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/03-editorial-directions.jpg" alt="编辑设计与海报演示案例" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/04-spatial-directions.jpg" alt="空间与建筑叙事演示案例" width="49%"></a>
+  <a href="docs/showcase/tencent-2026-q1/README.md"><img src="docs/showcase/tencent-2026-q1/assets/05-game-and-premium-directions.jpg" alt="游戏化与高端商务演示案例" width="49%"></a>
 </p>
 
 [查看五张拼图中的全部 30 张案例页面 →](docs/showcase/tencent-2026-q1/README.md)
