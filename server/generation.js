@@ -366,6 +366,10 @@ async function runLocalCodexImageGeneration(job, deck) {
     const args = [
       "--ask-for-approval", "never",
       ...buildCodexExecBaseArgs(runtimePolicy),
+      // The CLI ships Image Gen as an opt-in feature. Login status alone does
+      // not expose the native image tool, so an otherwise healthy exec would
+      // finish with imageCalls=0 and no PNG for the handoff layer to recover.
+      "--enable", "image_generation",
       "--ignore-rules",
       "--config", "mcp_servers={}",
       "--config", "features.apps=false",
