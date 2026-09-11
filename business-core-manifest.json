@@ -1,6 +1,6 @@
 {
   "version": "20260910-reference-masters-v2",
-  "sha256": "894b684926ab211ba10aa5f4435d6d923be9fce581f1e8a67e162bbaf0e13025",
+  "sha256": "d8838e1fd4a85212866127f68978ec7b4a1d221052892c97e383bcc9dd6afae3",
   "files": {
     "config/business-rules.json": "158584b3126380a05610e3c91b26afd82c89d076beb5e6d244518b692882f944",
     "config/prompts/codex-analyze.md": "4a525bbfd1572d77ce64b80bfa56305068c8840b341dc644b7d8f30d9236034b",
@@ -133,7 +133,7 @@
     "server/generation-qa-queue.js": "a6dcb599c74199df6e4aaac74e9b314a4487f1f93a4362edc71c41f6ff245367",
     "server/generation.js": "c845d2768301b3476756a819bbc17de8d9b8d61bbaba5c9cff92b4b65736c67d",
     "server/image-generation-runtime.js": "74dccf0836d6fec5f18e3b2885ed586ccfeddb75ba27f6a169dac757a90179af",
-    "server/index.js": "e2ceda13b11d5fcdf7100231e4c13ef828cd97c65d95695cd2bb8679da42a496",
+    "server/index.js": "34c584e4a84f5a1f616a280dbf11427f6c6a56e6094f71f967c82c678793d5ca",
     "server/local-lease.js": "d8bdcfae8d73655806c32c7bc3e9bd65110a43ac88d2a2d923ecfce975b10292",
     "server/process-context.js": "a3afe9910ea64a692374abae973127ec40dac918314b0a451a76f9b8c696655a",
     "server/process-runner.js": "fd1a4745349b01fc713c66b139406694a165d1506c62ffb0121d638a980e3a40",

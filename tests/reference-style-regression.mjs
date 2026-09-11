@@ -39,8 +39,17 @@ const engine = {
   cleanDisplayText: (value) => String(value || '').trim(),
   isCustomImage2Reference, image2ReferenceSignature, image2UploadedStyleSystem,
   image2UploadedReferencePrompt, image2VisualContractPrompt,
-  fssync: fs, path: { ...path, join: (base, relative, ...rest) => path.join(base, relative.replace(/^workbench\//, ''), ...rest) }, PROJECT_ROOT: root,
-  resolveStoredPath: (relative) => path.resolve(root, relative.replace(/^workbench\//, '')),
+  fssync: fs,
+  path,
+  PROJECT_ROOT: path.resolve(root, '..'),
+  resolveStoredPath: (relative) => {
+    const value = String(relative || '');
+    if (value.startsWith('workbench/')) {
+      const local = path.resolve(root, value.slice('workbench/'.length));
+      if (fs.existsSync(local)) return local;
+    }
+    return path.resolve(path.resolve(root, '..'), value);
+  },
 };
 vm.runInNewContext([
   'image2StyleId', 'image2ConsistencyMode', 'image2StyleSystem',
