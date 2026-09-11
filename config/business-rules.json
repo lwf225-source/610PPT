@@ -1,8 +1,8 @@
 {
   "payload": {
     "protocol": 1,
-    "version": "20260910-reference-masters-v2",
-    "publishedAt": "2026-09-10T09:41:00.096Z",
+    "version": "20260911-slide-image-background-v1",
+    "publishedAt": "2026-09-11T13:36:21.050Z",
     "editorialProtocol": 1,
     "image2": {
       "cover": {
@@ -440,5 +440,5 @@
       }
     }
   },
-  "sha256": "ce9d9bfbbf30085c5928c6de1f6092269a48324cd4b37d9448c8cb16cd9559cc"
+  "sha256": "b136a66cb45356d11005fe2d4c1cfd1cf5e304a58ffe27cd17a889325f0cceae"
 }

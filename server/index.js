@@ -3201,9 +3201,9 @@ app.post("/api/export/pptx", async (req, res) => {
       encodedBytes += verified.data.length;
       if (encodedBytes > 512 * 1024 * 1024) return res.status(413).json({ error: '整套页面图片过大，请减少图片大小后导出' });
       const slide = pptx.addSlide();
-      slide.background = { color: "FFFFFF" };
       // Give the packager the exact validated bytes, not a path it can reopen.
-      slide.addImage({ data: verified.data, x: 0, y: 0, w: 13.333, h: 7.5 });
+      // Store the whole page as the slide background, outside the shape tree.
+      slide.background = { data: verified.data, path: `background.${verified.mime.split("/")[1]}` };
     }
     await fs.mkdir(path.join(projectDir, "exports"), { recursive: true });
     const exportRun = crypto.randomUUID();

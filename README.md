@@ -195,7 +195,7 @@ Project files and orchestration are local. AI generation is not necessarily offl
 
 ### Does it create editable PowerPoint text and shapes?
 
-No. The current production path exports approved full-slide images into a PPTX. Each image fills one 16:9 slide.
+No. The current production path exports approved full-slide images into a PPTX. Each image is set as the background of one 16:9 slide, filling the canvas without adding a selectable picture object.
 
 ### Does uninstalling remove my projects?
 
